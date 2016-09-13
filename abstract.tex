@@ -1,0 +1,14 @@
+\begin{vcenterpage}
+\section*{Abstract}
+\paragraph{}
+Kevin Coogan and Saumya Debray, two researchers focused on digital reverse engineering, identified an issue within that field, and exposed it in a paper titled \textit{Equational Reasoning on x86 Assembly Code}\cite{coogan2011equational}. They stated that, while there is a great amount of tools able to perform reverse engineering analysis on high-level source code, there is a lack of such tool able to used on assembly code. The aim of this thesis is to show how the tool proposed in the aforementioned paper, which performs equational reasoning on x86 traces with the intend of improving their readability, could be extended to also perform static analysis. In this context, two additional issues have to be solved: Modelising the non-linear control flow, and deciding whether or not specific pointers are aliased. The former is solved using the static single assignment form, the later is handled thanks to a pointer analysis.
+\paragraph{}
+When performing manually what the static analysis tool would do, one can notice how the readability of its output has decreased compared to the one working on traces. This is due to the fact that the $\phi$-functions introduced by the static single assignment form does not clearly show which control structure has led to its existence, but also because of the undecidability of the pointer analysis problem, which implies that the used algorithm will only be able to provide approximative results.
+\end{vcenterpage}
+
+
+
+
+
+
+

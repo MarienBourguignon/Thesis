@@ -1,0 +1,319 @@
+\section{Prerequisites}
+\paragraph{}
+Before diving into the world of reverse engineering, it is important to be knowledgeable about a few prerequisites. This section will be focused on giving broad explanations on these topics as they could arguably be considered as the knowledge baseline over which someone can start performing reverse engineering. A deep understanding is not required, but, as one can expect, more knowledge comes with more ease, meaning work could be done more efficiently and with less headaches.
+
+\subsection{Hardware}
+\paragraph{}
+The hardware is the foundation over which the software world lies. Digital objects are made of zeros and ones for computers live in a binary word, and therefore are unable to grasp anything beyond these two states. Understanding how a computer is made, and also how they use theses successions of binary values to perform computations is important as reverse engineers usually have to work at or near this level of abstraction.
+
+\paragraph{}
+A very simple and outdated but still relevant architecture of a computer is the Von Neumann architecture. It was invented in 1945 by a Hungarian scientist named John von Neumann, and contains everything that is expected to be found in a mainstream computer: A CPU, a memory, and an input/output mechanism. A schematic representation can be observed in Figure~\ref{fig:von_neumann_architecture}.
+
+\begin{figure}[!htb]
+	\begin{minipage}[b]{0.4\textwidth}
+		\centering
+		\includegraphics[width=0.7\textwidth]{reverse_engineering/von_neumann_architecture.png}
+		\caption{Von Neumann architecture}
+		\label{fig:von_neumann_architecture}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.4\textwidth}
+		\centering
+		\includegraphics[width=0.9\textwidth]{reverse_engineering/harvard_architecture.png}
+		\caption{Harvard architecture}
+		\label{fig:harvard_architecture}
+	\end{minipage}
+\end{figure}
+
+\paragraph{}
+The Von Neumann architecture works as follows: The CPU (Central Processing Unit) is fed instructions from the memory (MEM on the diagram) by the common bus (the arrows), and it performs the specific actions according to the opcodes and the operands found in the instructions. An opcode is a number that represents a function the CPU can perform, the operands being the possible parameters to be applied to that function. See Table~\ref{table:hex_bin_english_lowl_level_instructions} for an example. The execution of an instruction is characterized by either modifying a piece of data, displacing data from one component to another or enabling a specific functionality in a component. The common bus allows the three components to communicate with each other, but the CPU is the one making the calls in a way that follows the semantics of the instructions that are fed to it. With this model, data and instructions are stored in the same memory. This is still the case today as executable files contain parts of their data along the side of the instructions that compose them.
+
+\paragraph{}
+The Instruction Set Architecture, or ISA for short, is what is provided by the CPU to the software applications. It includes, amongst other things, the list of opcodes (instructions), how native data types are defined, the names of the registers along with their sizes and types, the addressing modes and the memory architecture, and how interruptions and exception handling are done. An ISA defines what a CPU can do as it is the only interface to the hardware that is given to the software applications~\cite{microarchitecture2015dragomir}. As a result, it is part of what a low level reverser has to master. To be noted that the ISA can differer from one CPU to another.
+
+\begin{table}[!htb]
+	\centering
+	\begin{tabular}{|l|l|l|}
+		\hline
+		Hexadecimal & Binary                        & English                               \\ \hline \hline
+		\textcolor{bittersweet}{A8} \textcolor{bluegray}{02}   & \textcolor{bittersweet}{1010 1000} \textcolor{bluegray}{0000 0010}           & Compare the value of register al with 2 \\ \hline
+		\textcolor{bittersweet}{89} \textcolor{bluegray}{CB}   & \textcolor{bittersweet}{1000 1001} \textcolor{bluegray}{1100 1011}           & Move the value of register ecx to ebx   \\ \hline
+		\textcolor{bittersweet}{83} \textcolor{bluegray}{F0 09} & \textcolor{bittersweet}{1000 0011} \textcolor{bluegray}{1111 0000 0000 1001} & Xor the value of register eax with 9      \\ \hline
+	\end{tabular}
+	\caption{Intel x86 instructions made of an opcode (\textcolor{bittersweet}{red}) and two operands (\textcolor{bluegray}{blue}).}
+	\label{table:hex_bin_english_lowl_level_instructions}
+\end{table}
+
+\paragraph{}
+An improved model called the Harvard architecture can be seen in Figure~\ref{fig:harvard_architecture}. It provides a separation between the data and the code by means of two different memory blocks and by doing so, it removes the Von Neumann bottleneck\footnote{See John Backus' award winning lecture: \textit{Can programming be liberated from the Von Neumann style?: a functional style and its algebra of programs}~\cite{backus1978can}} of the single shared bus of the first model. Nowadays, a third model called the Modified Harvard Architecture took over by combining the advantages of the two others: Instructions are treated as data while allowing concurrent instruction/data access. It is implemented as a hierarchy of caches that can be accessed concurrently over a monolithic memory that contains object code where code and data are mixed.
+
+\subsection{Operating System}
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=1\textwidth]{reverse_engineering/operating_system.png}
+	\caption{Abstract view of the components of a computer system. Image inspired by the book \textit{Operating System Concepts}~\cite{Silberschatz:2012:OSC:2490781}.}
+	\label{fig:operating_system}
+\end{figure}
+
+\paragraph{}
+A computer system can be roughly divided into four parts~\cite{Silberschatz:2012:OSC:2490781}: The hardware, the operating system, the software applications, and the users. An abstract representation of such system can be observed in Figure~\ref{fig:operating_system}. As seen previously, the hardware is composed of at least a CPU, a (hierarchy of) memory, and an input/output mechanism that are used to carry out software applications. The software applications are tools used by the users to solve problems using the resources given by the hardware. Finally, the operating system is what controls the hardware and coordinates its use amongst the software applications, it does not produce useful work, but rather provides an environment that is used by software applications to do useful work. An operating system can be observed with two different viewpoints, from the user's and from the computer's viewpoint. They will both be briefly discussed hereunder.
+
+\paragraph{}
+From the user's point of view, what matters in an operating system is how easier it makes the computer to use as well as the performances he or she can get from it, without caring too much about resources utilisation. When designing an operating system, it is important to take into account these two viewpoints to come up with the most appropriate compromises according to the purpose of the operating system being developed.
+
+\paragraph{}
+From the computer's point of view, the operating system is supposed to be a fair and efficient resources allocator. It has to manage the resources given by the hardware such as devices, memory space, and CPU time by deciding how to allocate them to satisfy the needs of the software applications and the users. According to what the computer system is designed for, the definition of fair and efficient will vary.
+
+\paragraph{}
+As explained above, the operating system provides an environment for the software applications to do useful work. It gives an abstraction layer that hinders applications from having to take into consideration what kind of hardware is making a specific computer outside the CPU. Because the ISA is the only connection between the hardware and the software, the operating system cannot offer any abstraction on that regard. Some operating system also offer additional services such as inter-process communication, file management, computer administration, and so on. The communication between the applications and the operating system is mainly done through system calls. Understanding how these calls are made as well as their repercussion on the system is of critical importance from a reverser engineering's point of view.
+
+\subsection{Programming Languages} 
+\begin{framed}
+	\begin{definition}
+		\underline{Programming languages} are notations for describing computations to people and to machines. 
+		\begin{flushright}
+			\hfill{}{Compilers: Principles, Techniques, and Tools~\cite{Aho:2006:CPT:1177220}}
+		\end{flushright}
+	\end{definition}
+\end{framed}
+
+\paragraph{}
+Computers and human beings do not speak the same languages, the former can only comprehend numbers whereas the later feel more comfortable around words and sentences. Programming languages are the mean used to instruct a computer on what to do using formally constructed syntaxes that are understandable by humans. The key point here is that these languages follow strict rules that allow automatic translation from one representation to the other. A source code is obtained by writing instructions using a programming language. Most of the time, these pieces of texts are processed by automatic translation tools called compilers to generate a semantically equivalent but syntactically different sequence of instructions. See Section~\ref{sec:compilers} for more information on compilers.
+
+\paragraph{}
+As the ISA is the bridge between the software applications and the hardware world, programming languages can be seen as the bridge between human beings and the hardware world. These languages come in many forms, ranging from high level to low level, from imperative to purely functional, and many other classifications. In this work, the two previously cited classification are of great importance as they will be mentioned in the subsequent pages.
+
+\subsubsection{High vs Low Level Programming Languages} \label{sec:high_vs_low_level_programming_languages}
+\paragraph{}
+The more a programming language abstracts away the ISA and the system calls of the operating system, the more hight level it is. Assembly languages are considered to be the lowest level programming languages there are as they only translate opcodes that are expressed with numbers to Latin characters. On the opposite side of the spectrum, programming languages such as functional languages are considered to be high level because the underlying mechanism of the computer does not appear in the source code. For productivity reasons, one would want to use a high-level programming language because he or she can do more operation by writing less code. For efficiency reasons, one would rather want to use a low-level programming language as it allows optimisation on a finer grain scale. There is an abundant variety of programming languages that vary in position on this spectrum, one has to choose wisely according to its needs.
+
+\paragraph{}
+In Listing~\ref{lst:high_low_level_programming_languages_1} and Listing~\ref{lst:high_low_level_programming_languages_2} can be observed two source codes, one written in an assembly language called Microsoft Macro Assembler, or MASM for short, and the other in Haskell. They both perform the same operation, displaying the sequence of characters “Hello World!” on the screen, but they differ in the syntax. Haskell, being more high level than MASM, allows to express instructions in a more human understandable way whereas in MASM, it is barely understandable. \\ \\
+
+\noindent\begin{minipage}{.45\textwidth}
+	\begin{lstlisting}[caption={Hello World written in MASM}, label={lst:high_low_level_programming_languages_1}, frame=tlrb, language={[x86masm]Assembler}, otherkeywords={.CODE}]
+.MODEL Small
+.STACK 100h
+.DATA
+	db msg 'Hello World!$'
+.CODE
+start:
+	mov ah, 09h
+	lea dx, msg
+	int 21h
+	mov ax,4C00h
+	int 21h
+end start
+	\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth}
+	\begin{lstlisting}[caption={Hello World written in Haskell}, label={lst:high_low_level_programming_languages_2}, frame=tlrb, language={haskell}]
+main :: IO ()
+main = do putStrLn "Hello World!"
+	\end{lstlisting}
+\end{minipage}
+
+\subsubsection{Imperative vs Functional Programming Languages}
+\paragraph{}
+Human languages such as English and French are used to communicate with one another. They provide grammatical moods that are most of the time used in conjunction with verbs to express the attitude of a speaker toward what he or she is saying. One of such moods is the imperative which expresses commands or requests. For example, in the sentence “Write your thesis”, the speaker use the imperative to order him or herself to get back to work.
+
+\paragraph{}
+Similarly, imperative programming languages use statements which change the program's state. An example of source code written using an imperative language named C can be observed in Listing~\ref{lst:fibonacci_imperative_functional_1}. It declares a function called $fib$ which takes an integer $n$ and returns the $n$th Fibonacci number. Inside its body can be observed a sequence of imperative statements which tell the computer how to change its state. The structured constructs of selection (\textit{if}) and repetition (\textit{for}) allow the programmer to direct the flow of execution at run time according to previous states.\\ \\
+
+\noindent\begin{minipage}{.45\textwidth}
+	\begin{lstlisting}[caption={Fibonacci written in C}, label={lst:fibonacci_imperative_functional_1}, frame=tlrb, language=C]
+int fib(int n) {
+	
+	int p_fib = 0;
+	int c_fib = 1;
+	int tmp, i;
+	
+	if(n == 0)
+		return p_fib;
+	
+	if(n == 1)
+		return c_fib;
+	
+	for(i=1; i<n; i++) {
+		tmp = c_fib;
+		c_fib = p_fib + c_fib;
+		p_fib = tmp;
+	}
+	
+	return c_fib;
+}
+	\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth}
+	\begin{lstlisting}[caption={Fibonacci written in Haskell}, label={lst:fibonacci_imperative_functional_2}, frame=tlrb, language={haskell}]
+-- Inefficient implementation		
+fib :: (Num a, Eq a) => a -> a
+fib 0 = 0
+fib 1 = 1
+fib n = fib (n-1) + fib (n-2)
+
+-- Efficient implementation
+fib :: Int -> Integer
+fib n = fibs !! n
+fibs :: Num a => [a]
+fibs = 0 : 1 : 
+zipWith (+) fibs (tail fibs)
+	\end{lstlisting}
+\end{minipage}
+
+\paragraph{}  
+Functional programming languages offer another approach to direct a computer. They describe to the computer what is desired instead of how to do it. As it can be observed in Listing~\ref{lst:fibonacci_imperative_functional_2}, instead of giving the steps the computer has to follow to generate the $n$th Fibonacci number, it tells that a Fibonacci number is either $0$, $1$, or the sum of the two direct precedent Fibonacci numbers. Functional languages differ fundamentally from the imperative ones as they do not allow side-effects by preventing states from changing. A variable, when initialised to a specific value, cannot see its state (i.e value) changed. This can be generalised to function as they will always produce the same result when applied to the same parameters. More formally, $f(x) = f(x)$ is always true. An interesting implication is that programmers don't have to think about control flow anymore as the order of execution becomes irrelevant\footnote{This does not tackle the problem of data dependency.}. These languages are said to be referentially transparent, a property that allows equational reasoning. See Section~\ref{sec:algebra_of_program} for more information on equational reasoning and see the influential paper entitled \textit{Why Functional Programming Matters}~\cite{hughes1989functional} written by John Hughes for more information on functional programming.
+
+\subsection{x86 Architecture}
+\paragraph{}
+x86 is a family of ISA that is backward compatible with many of Intel's processors. It was first released in 1978 inside the 8086 processor and then continued to be used and extended in the subsequent processors such as the 80186, 80286, 80486 and many others. The name x86 comes from the fact that for a period of time, most of Intel's processors which had an architecture belonging to that family had names finishing in 86, thus x86. 
+
+\paragraph{}
+Since x86 is backward compatible, it encompasses the 16-bit, 32-bit and 64-bit version of the architecture. The 64-bit architecture is called x64, AMD64 for it was first introduce by AMD, or even x86\_64 because it is an extension to the x86 architecture. It was released in 2000~\cite{amd64}. The 32-bit one is also called IA-32 for "Intel Architecture 32-bit" and was released in 1985. The IA-64 does not correspond to x64, it actually refers to the 64-bit Itanium architecture of Intel. 
+
+\paragraph{}
+The $x$ in “$x$-bit architecture” roughly means how many bytes are addressable, or in other words, what is the maximal size of the address space (which is the range of memory that can be addressed). The addresses, when used by the CPU, have to be stored in registers. They then have to have a size at least equal to that $x$. For example, a 32-bit architecture can address $2^{32}$ bytes and has to have $32$-bit wide registers to store these addresses.
+
+\paragraph{}
+This family of ISA is said to be little endian. Endianness refers to the order in which the bytes that compose a in-memory multi byte value are ordered. With big endian, the most significant byte is stored first at the lowest address. Little endian is the opposite, the most significant byte is stored at the highest address. See Table~\ref{table:little_and_big_endian} for two examples.
+
+\begin{table}[!htb]
+	\centering
+	\begin{tabular}{|l|l|l|}
+		\hline
+		Value      & Big-endian  & Little-endian \\
+		\hline \hline
+		0x1CEB00DA & 1C\textvisiblespace EB\textvisiblespace 00\textvisiblespace DA & DA\textvisiblespace 00\textvisiblespace EB\textvisiblespace 1C   \\
+		\hline
+		0xDEADC0DE & DE\textvisiblespace AD\textvisiblespace C0\textvisiblespace DE & DE\textvisiblespace C0\textvisiblespace AD\textvisiblespace DE  \\
+		\hline
+	\end{tabular}
+	\caption{Differences between little and big endian.}
+	\label{table:little_and_big_endian}
+\end{table}
+
+\paragraph{}
+The IA-32 can operate in two modes, real and protected. In real mode, the processor has to be used as if it only supported 16-bit instructions. In that mode, the processor allows unrestricted memory accesses to all the running processes. The protected mode does not have the 16-bit restriction and provides virtual memory, paging, and subsequently protection over memory locations. Nowadays, CPUs start in real mode for compatibility reasons and are switched to protected mode by the operating system after having done a specific initialisation.
+
+\paragraph{}
+x86 also provides levels of privileges ranging from 0 to 3 called ring levels~\cite{Dang:2014:PRE:2636663}. Ring 0 is the highest privilege level, giving unrestricted access to the system, ring 1 and 2 are usually not used, and finally ring 3 allows restricted read and modification of system settings. Today's operating systems usually implement privilege separations by means of these rings, ring 0 being kernel mode (for the operating system) and ring 3 user mode (for the user's applications).
+
+\paragraph{}
+The following sections will discuss the x86 ISA in user mode in its 32-bit version. It is important to master this topic as this document will solely focus on this family of architectures.
+
+\subsubsection{Registers} \label{sec:registers}
+\paragraph{}
+Registers are units of memory of bounded size that are used by the Arithmetic and Logic Unit, or ALU for short, to store operands and results of instructions. They have specific names to allow discrimination from one another as they are not referenceable using memory locations. For speed matters, they are located very near the ALU, and are built in such a way that loading and storing values takes as little clock cycles as possible.
+
+\paragraph{}
+IA-32 has four 32-bit general purpose registers being $eax$, $ebx$, $ecx$ and $edx$; five index and pointer registers being $esi$, $edi$, $ebp$, $eip$ and $esp$; and one flag register $eflags$. x86 being backward compatible, it is still possible to use the 16-bit versions of these registers by omitting the leading $e$ that stands for extended. They do not refer to another register but rather the first 16-bit of the corresponding extended register. The four general purpose registers can be furthermore subdivided in their non extended form by replacing the $x$ by either $h$ or $l$. They respectively stand for high for the most significant 8-bit and low for the least significant 8-bit.
+
+\paragraph{}
+Intel's engineers gave names to the registers according to their purposes. Some are still used the way they were designed to be, others not as much as before. The most flagrant example would be the four general purposes registers $eax$, $ebx$, $ecx$ and $edx$, all of which are optimised to be used in specific situations but can very well be used interchangeably. Still, using the right register with its corresponding instruction is interesting for compression and documentation reasons. Some instructions are built in such a way that they implicitly use specific registers, making it useless to specify them when the instruction is called. Once one knows about these purposes, he or she can also get a faster understanding of the program as the code will be more or less self documenting~\cite{relawdaq}. The registers and their names will be discussed hereunder.
+
+\begin{itemize}
+	\item \textbf{eax, ax, ah, al} is the Accumulator register, hence the $a$. It is optimised to be used as an accumulator.
+	\item \textbf{ebx, bx, bh, bl} is the Base register, hence the $b$. It used to be one of the few registers that could be used as a pointer. It lost its function as most registers can be used this way.
+	\item \textbf{ecx, cx, ch, cl} is the Counter register, hence the $c$. Again, optimised to be used as a counter.
+	\item \textbf{edx, dx, dh, dl} is the Data register, hence the $d$. It is an extension to the accumulator.
+	\item \textbf{esp, sp} contains the address of the top of the current stack. Its name comes from (extended) stack pointer.
+	\item \textbf{ebp, bp} contains the base address of the current stack. Its name comes from (extended) base pointer.
+	\item \textbf{esi, si} contains the source address for string and memory operations. Its name comes from (extended) source index.
+	\item \textbf{edi, di} contains the destination address for string and memory operations. Its name comes from (extended) destination index.
+	\item \textbf{eip, ip} contains the address of the next instruction to execute. Its name comes from (extended) instruction pointer.
+	\item \textbf{eflags, flags} contains the state of the processor by means of binary flags. Most instructions have implicit effects on these flags, and they can be used to do conditional branching. See Intel's manual for a complete description of that register.
+\end{itemize}
+
+\paragraph{}
+There are also five segment registers used to do segmented addressing. They are called $cs$ for code segment, $ds$ for data segment, $ss$ for stack segment, and finally $es$, $fs$ and $gs$ that are extra segments at the disposition of the programmers. Segmentation allows a program to be split into segments that have independent address spaces~\cite{guide2011intel}. A usual way of doing this is to have the code (i.e the sequence of instructions) and the stack separated, each of them in their own segment.
+
+\subsubsection{Instructions} \label{sec:instructions}
+\paragraph{}
+The instructions provided by the ISA have two forms, the one understood by the CPU and a symbolic one understood by humans. The later has the following format~\cite{guide2011intel}:\\
+\textit{label: mnemonic argument1, argument2, argument3}\\
+Label is an identifier followed by a colon, the mnemonic is a reserved name for a class of instruction opcodes with the same function, and the arguments (or operands) are what is applied to the function. A function can have from zero to three operands, which can be either literals or identifiers for data items. When a instruction is taking only two operands, the right one is the source and the left one is the destination.
+
+\subsubsection{Syntax} \label{sec:syntax}
+\paragraph{}
+There are two syntax notations for assembly code written using the x86 instruction set, the Intel and the AT\&T\footnote{An American multinational telecommunications corporation.} syntax. As it is suggested, they only differ in the way of representing the same thing. The biggest differences are the following:
+\begin{itemize}
+	\item AT\&T prefixes registers with the symbol \% and immediate values with \$. On the contrary, Intel does not use anything to differentiate the two.
+	\item Intel puts the destination operand on the left, whereas AT\&T puts it on the right.
+	\item Intel does not use different mnemonics for the same instruction applied to operands of different size, while AT\&T does.
+\end{itemize}
+An example of the same assembly code written with the two syntaxes can be observed in Listing~\ref{lst:intel_vs_att_1} and Listing~\ref{lst:intel_vs_att_2}. This work will solely use the Intel syntax.\\ \\
+
+\noindent\begin{minipage}{.45\textwidth}
+	\begin{lstlisting}[caption={Equivalent of Listing~\ref{lst:intel_vs_att_2} using the Intel syntax.}, label={lst:intel_vs_att_1}, frame=tlrb, language={[x86masm]Assembler}]
+mov ecx, AABBCCDDh
+mov ecx, [eax]
+mov ecx, eax
+	\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth}
+	\begin{lstlisting}[caption={Equivalent of Listing~\ref{lst:intel_vs_att_1} using the AT\&T syntax.}, label={lst:intel_vs_att_2}, frame=tlrb, language={[x86masm]Assembler}]
+movl $0xAABBCCDD, %ecx
+movl (%eax), %ecx
+movl %eax, %ecx
+	\end{lstlisting}
+\end{minipage}
+
+\subsection{Compilers} \label{sec:compilers}
+
+\begin{framed}
+	\begin{definition}
+		A \underline{compiler} is a program that can read a program in one language --- the source language --- and translate it into an equivalent program in another language --- the target language.
+		\begin{flushright}
+			\hfill{}{Compilers: Principles, Techniques, and Tools~\cite{Aho:2006:CPT:1177220}}
+		\end{flushright}
+	\end{definition}
+\end{framed}
+
+\paragraph{}
+A compiler could be compared as a human translator doing textual translation from a source natural language to a target natural language. The translator has to choose its words wisely as it is important for the resulting translation to have the same meaning as the original text. To do so, a translator has to understand the meaning of the source text as well as its context and to stay as faithful as what the original author wrote. Compared to human translators, compilers are not always able to translate source texts as faithfully as a translator would because of ambiguities arising from the contexts. Programming languages are languages that have formal sets of rules to unambiguously define what makes a well-formed source code called grammars. Compilers use (amongst other things) these grammars to generate semantically equivalent translations in a target language.
+
+\paragraph{}
+Compilers can technically translate from any programming language to another, but they are more frequently used to translate from one specific language to an assembly language. As it has been explained in Section~\ref{sec:high_vs_low_level_programming_languages}, most programmers will prefer to work with programming languages that offer layers of abstraction over the underlying system. The purpose of compilers is therefore to automatically remove these layers, or in other words, to specialise a source code for the hardware and the operating system to understand it.
+
+\paragraph{}
+The compiling process is the process in which a source code is turned into an executable file. It is made of multiple tools (from which the compiler belongs) that are put one after the other to gradually perform the transformation. The process can be observed in Figure~\ref{fig:compiling_process}. To turn a source code written using a specific programming language into target machine code (i.e turned into understandable machine instructions in a structured file for the computer to execute), the subsequent steps are usually followed:
+\begin{enumerate}
+	\item \textbf{Preprocessor}: The preprocessor can be used to, amongst other things, gather all the source code files making the application and to merge them into one file, to do textual swaps, to do macro expansions, and to extend the underlying language.
+	\item \textbf{Compiler}: It does the translation from one language to the other. In this situation, from a specific language to an assembly language. The output will be made while taking into account the ISA as well as the operating system of the targeted system. Compiling can be divided into two phases, the analysis and the synthesis. The analysis breaks up the code of a source file into tokens and tries to find out the structure of the code using the grammar. If it succeeds, it will then check if the structure makes sense semantically. If yes, the analysis part is over and the result is sent to the synthesis. However, if the code is syntactically incorrect or semantically unsound, the process can't continue. Upon receiving the output of the analysis, the synthesis part will generate the code for a targeted platform in the form of assembly code.
+	\item \textbf{Assembler}: It will textually translate assembler instructions into the opcode/operands dyads by doing lookups on the mnemonics. The resulting object is called an object file. It is important to understand that machine instructions have a one-to-one relationship with assembly instructions.
+	\item \textbf{Linker}: It will merge all the object files that made an executable file while resolving addresses pointing from one object file to another.
+\end{enumerate}
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.7\textwidth]{reverse_engineering/compiling_process.png}
+		\caption{A language-processing system. Image inspired by \textit{Compilers: Principles, Techniques, and Tools}~\cite{Aho:2006:CPT:1177220}.}
+	\label{fig:compiling_process}
+\end{figure}
+
+\paragraph{}
+From a reversing point of view, understanding the compilation process and even more so the compiler is of great importance. The translation into an executable file is not a direct translation, one operation can be mapped to a gaggle of other operations, and code optimisation can be carried out, meaning that some parts of the original code can be modified, reordered or even deleted. Moreover, the process is lossy, meaning that variable and function names are usually lost and that variable types are no more clearly identifiable, and it is a many-to-many operation because a source program can be translated into machine code in many different ways, and also the other way around~\cite{eagle2011ida}. The insight one can get by understanding this process, and all that comes with it, can be very useful when performing reverse engineering.
+
+\paragraph{}
+Some programming languages do not go all the way down to the compilation process until runtime. This family of languages includes Java or C\# which use an intermediate representation called bytecode or MSIL. These intermediate languages usually keep plenty of information that would not be found if the compilation was done once and for all.
+
+\subsection{Executable File Format} \label{sec:executable_file_format}
+\paragraph{}
+An executable file format is a standardised way of representing an executable file so that the loader can process it. In modern operating system, an executable file cannot be simply plastered into RAM memory for the CPU to execute it. The loader will first have to parse the structure to extract meta information about the executable to set up and manage the adequate environment in which the program found in the executable will be executed.  
+
+\paragraph{}
+There are many structures as they are usually different across operating systems. Windows is using the Portable Executable (or PE) file format which is an extended version of the Common Object File Format, or COFF for short, developed by AT\&T since Windows NT 3.1~\cite{pe_win32}. Many Unix-like operating systems use the Executable and Linkable Format, or ELF for short, developed by the Unix System Laboratories~\cite{tis1995tool}.
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.4\textwidth]{reverse_engineering/ELF_structure.png}
+	\caption{Simplified representation of the ELF format. Image inspired by the \textit{Tool Interface Standards}~\cite{tis1995tool}.}
+	\label{fig:ELF_format}
+\end{figure}
+
+\paragraph{}
+In Figure~\ref{fig:ELF_format}, one can observe how files formatted using the ELF structure are organised. The segments, as explained above, contain what concretely makes the executable, the rest is metadata. The ELF header describes the file's organisation, the program header table tells the system how to create a process image, and finally the section header table contains information about the segment.
+
+\paragraph{}
+In the metadata, one can usually find the entry point of the executable (the place the processor has to start decoding and executing instructions), where the different segments are located, the time at which the linker produced the file, the type of the file (executable, dynamic-link library, ...), and so on.
+

@@ -1,0 +1,22 @@
+digraph G {
+"1" -> "2"
+"1" -> "4"
+"1" -> "8"
+"2" -> front3
+"4" -> dom5
+"4" -> dom6
+"8" -> front9
+dom5 -> front3
+dom5 -> dom7
+dom6 -> dom7
+dom6 -> front9
+front3 -> front10
+dom7 -> front10
+front9 -> front10
+dom5[color=darkseagreen1, style=filled, label="5"];
+dom6[color=darkseagreen1, style=filled, label="6"];
+dom7[color=darkseagreen1, style=filled, label="7"];
+front3[color=deepskyblue, style=filled, label="3"];
+front10[color=deepskyblue, style=filled, label="10"];
+front9[color=deepskyblue, style=filled, label="9"];
+}

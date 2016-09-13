@@ -1,0 +1,27 @@
+\chapter{Conclusion} \label{chapter:conclusion}
+\paragraph{}
+In the past four chapters, the practice of digital reverse engineering has been discussed at great length. It started with a piece of history, a cornerstone in the computer industry, which showed the relevance of this practice that persisted up to these days. From there, the practice has been gradually described, starting from the technical foundation upon which it lies, up to the latest academical results which are relevant to the contribution of this work.
+
+\paragraph{}
+In this era of digitalisation, mankind finds itself carried away in a constantly increasing reliance on software applications, from mundane activities such as counting footsteps thanks to a pedometer installed on a smartwatch, up to cutting-edge medical analysis provided by artificial intelligence able to understand natural languages. For computer security matters, the tests of correctness of those applications with critical roles, but also because of the perpetual erosion of time which leads source code and documentation to get lost, the need of being able to reason about these applications in their most basic form, that is, as sequences of machine instructions, become apparent. As such, reverse engineering is still a relevant topic as of today, and probably for the many years to come. 
+
+\paragraph{}
+As Kevin Coogan and Saumya Debray have said, tools which have been engineered to perform analysis through reverse engineering at assembly level are sparse. They then put forward one new tool to fill this gap, and with it the idea of a potential extension. The contribution of this thesis has then been to explore this idea and to provide a possible way of implementing it.
+
+\paragraph{}
+The original tool was aimed at making assembly code easier to understand by translating it into a functional intermediate representation of type static single assignment form, and by allowing to reason about it thanks to equational reasoning. As it was originally described, it was only able to perform analysis on traces of Intel x86 assembly, making a dynamic analysis tool.
+
+\paragraph{}
+The contribution of this work is to explain how one could allow this tool to also accept assembly listings directly from an executable file, making it usable for static analysis. This seemingly easy task is made complicated by the fact that the original tool has not been released to the public, but also because indirect memory accesses can cause aliasing dependencies which might not be modelised by the intermediate representation. If proper care is not taken when resolving these specific dependencies, the tool will generate erroneous results. As a consequence, most of the complexity in implementing the new tool resides in the pointer analysis and in implementing the original tool which has to be able to reason about the whole Intel x86 instruction set.
+
+\paragraph{}
+In contrary with the tool which only provides dynamic analysis, the proposed one will yield a less readable output. Knowing that one of the main reasons which lead the original tool to be developed was to improve the readability of assembly code, one might wonder if it is worth extending it for static analysis. A decompiler could be the equivalent of the tool for performing static analysis.
+
+\paragraph{}
+Further work on the topic might include implementing the tool, doing researches on more accurate pointer analysis for its precision will increase the readability of the output of the tool, and investigating whether or not optimisation algorithms working on SSA forms would be beneficial for the tool.
+
+
+
+
+
+ 

@@ -1,0 +1,22 @@
+\frametitle{$\chi$-functions}
+	\begin{columns}[T] % align columns
+		\begin{column}{.48\textwidth}
+			\begin{block}{Aliased}
+			\begin{lstlisting}[language=C]
+<@$ [a]_1 := 42 $@>
+<@$ [b]_2 := 43 $@>
+<@$ [a]_2 := [b]_2 $@>
+			\end{lstlisting}
+			\end{block}
+		\end{column}%
+		\hfill%
+		\begin{column}{.48\textwidth}
+			\begin{block}{May be aliased}
+			\begin{lstlisting}[language=C]
+<@$ [a]_1 := 42 $@>
+<@$ [b]_2 := 43 $@>
+<@$ [a]_2 := \chi([a]_1, [b]_2) $@>
+			\end{lstlisting}
+			\end{block}
+		\end{column}%
+	\end{columns}

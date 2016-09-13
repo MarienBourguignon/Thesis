@@ -1,0 +1,34 @@
+\chapter{Introduction} \label{chapter:introduction}
+
+\section{Introducing the Problem}
+\paragraph{}
+Reverse engineering is a blooming methodology that owns its widespread acknowledgement to the analysis of hardware systems, a process which involves deciphering the design of finished engineered products, usually with the ambition of replicating them~\cite{6313354}. It can be observed in a variety of disparate domains such as in the traditional manufacturing industry, the semiconductor industry, the defence industry, the car industry, and so on. 
+
+\paragraph{}
+The following definition of reverse engineering gives a good insight of what this practice means while being broad for it has been used by the American court in a variety of different cases. 
+\begin{framed}
+	\begin{definition} 
+		\underline{Reverse engineering} is the process of extracting know-how or knowledge from a human-made artefact.
+		\begin{flushright}
+			\hfill{}{The Law and Economics of Reverse Engineering~\cite{samuelson2002law}}
+		\end{flushright}
+	\end{definition}
+\end{framed}
+
+\paragraph{}
+In this definition, two important points can be found. The first one is that reverse engineering is about rediscovering knowledge and nothing more. The second point is that the artefact under scrutiny has to be man made or in other words, it has to have been engineered by one or more people. In these conditions one can understand the added term reverse, implying that it is about going backward in the engineering process to extract information out of the artefact.
+
+\paragraph{}
+Since the advent of the digital era, the world has seen computer systems getting more and more ubiquitous. They can now be found in virtually every modern houses as well as in most companies where they usually take critical parts in ensuring their effective functioning. Reverse engineering has then increased its scope to encompass the digital world, with more general end goals. Its use is mostly found in software engineering and computer security, not necessarily with the intent of making replications, but rather to gain a more detailed understanding of a specific system~\cite{chikofsky1990reverse}.
+
+\paragraph{}
+With digital reverse engineering gaining in popularity, methods have been developed to counteract this practice. These methods usually go in either of the two main directions: Confusing the tools used to perform the reverse engineering, or confusing the reverse engineers by means of obfuscation. Naturally, methods to counteract these anti reverse engineering methods have consequently arose. This gradual escalation has led to the creation of a myriad of tools aimed at both helping developers protecting their applications from reverse engineering by embedding anti reverse engineering methods, and helping reverse engineers to perform reverse engineering while circumventing potential protections.
+
+\section{Contribution}
+\paragraph{}
+The contribution of this paper consists of a detailed explanation as to how one could extend the capabilities of an existing tool described by two researchers, Kevin Coogan and Saumya Debray, in a paper titled: \textit{Equational Reasoning on x86 Assembly Code}~\cite{coogan2011equational}. Their tool provides a means to perform dynamic analysis of x86 assembly traces, with the purpose of countering obfuscation methods. The contribution explains how to allow the tool to operate in a static context.
+
+\section{Organisation}
+\paragraph{}
+This work has been organised in five chapters. Chapter~\ref{chapter:introduction} introduces the topic of reverse engineering, it states the contribution of this work, and it lays down its organisation. Chapter~\ref{chapter:digital_reverse_engineering} describes in detail the topic of digital reverse engineering, that is: What it is, why it is helpful, what are the legal aspects which have to be taken into consideration, what are the prerequisites that have to be mastered prior to performing reverse engineering, how to perform reverse engineering, and finally, how to counter reverse engineering. Chapter~\ref{chapter:equational_reasoning} describes a dynamic analysis tool proposed by Kevin Coogan and Saumya Debray, which serves as a starting point for the contribution. Chapter~\ref{chapter:contribution} contains the contribution. It deals with the static single assignment form, pointer analysis, and how one could potentially implement a tool based on the work presented in Chapter~\ref{chapter:equational_reasoning}. Chapter~\ref{chapter:conclusion} is the concluding chapter of this work.
+

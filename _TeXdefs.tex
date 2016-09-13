@@ -1,0 +1,90 @@
+\documentclass[11pt,a4paper,oneside]{book}
+\usepackage[hmargin={1.25in,1.25in},vmargin={1.25in,1.25in}]{geometry} %,vmargin={1.25in,1.25in}
+
+\linespread{1.2}
+
+\makeindex % info sur le chapitre au dessus de chaque page
+\usepackage{textcomp}
+\usepackage{fancyhdr}
+\usepackage{makeidx}
+\pagestyle{myheadings}
+\fancyhf{}
+\rhead[\leftmark]{thepage}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{url}
+\usepackage{glossaries} % notations & abbreviations
+\usepackage{listings} % source code
+\usepackage{multicol} % text in 2 columns
+
+\usepackage{graphicx}
+\usepackage[usenames,dvipsnames]{color}
+
+\usepackage{amsmath, amsthm, amssymb} % math stuff
+\usepackage{framed} % put something in a box
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{algorithmicx}
+
+\algnewcommand\Input{\textbf{Input}}
+\algnewcommand\Output{\textbf{Output}}
+\algnewcommand\MCall{\textbf{call }}
+
+\usepackage{fancybox}
+\makeatletter
+\newenvironment{CenteredBox}{% 
+	\begin{Sbox}}{% Save the content in a box
+	\end{Sbox}\centerline{\parbox{\wd\@Sbox}{\TheSbox}}}% And output it centered
+\makeatother
+
+\lstset{escapeinside={<@}{@>}}
+
+\let\emptyset\varnothing
+
+\newtheorem{definition}{Definition}
+
+\usepackage[final]{pdfpages} % include pdf files
+
+%\AtBeginDocument{
+%	\renewcommand\tablename{Listing} % change the name of the Table literal
+%}
+
+\makeglossaries
+\newglossaryentry{SJ}{name={$\mathcal{C}^\infty$},sort=sj,
+	description={Special Chuck Norris Joke Symbol}}
+
+\usepackage{hyperref}
+\hypersetup{
+	bookmarksnumbered = true,
+	pdfstartview      = FitH,
+	pdfborder         = {0 0 0},
+	pdfauthor   = {Marien Bourguignon},
+	pdftitle    = {TODO: Find title},
+	pdfsubject  = {}
+}
+
+
+\usepackage{nth}
+\usepackage{xcolor}
+
+\definecolor{bittersweet}{rgb}{1.0, 0.44, 0.37}
+\definecolor{bluegray}{rgb}{0.4, 0.6, 0.8}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+	backgroundcolor=\color{white},
+	captionpos=b,
+	stringstyle=\color{mymauve},
+	keywordstyle=\color{blue},
+	commentstyle=\color{mygreen},
+	tabsize=4,
+	breaklines=true
+}
+
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}

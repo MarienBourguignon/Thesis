@@ -1,0 +1,96 @@
+\section{Motivations and Scenarios}
+\paragraph{}
+The use of reverse engineering in the digital world usually arises from two of the many areas of computer science: Information security and software engineering. They will both be described in this section, and then a list of generic scenarios that could non exclusively originate from both areas will be given.
+
+\paragraph{}
+Knowing where a certain project falls in can sometimes be useful as it helps the reverser looking for the appropriate set of reversing tools, whether or not seeking legal counselling would be appropriate, or even finding the right piece of literature that could best enlight his or her mind. 
+
+\pagebreak
+
+\subsection{Software Engineering}
+\begin{framed}
+	\begin{definition}
+		\underline{Software Engineering} is
+		\begin{enumerate}
+			\item The application of a systematic, disciplined, quantifiable approach to the development, operation, and maintenance of software; that is, the application of engineering to software.
+			\item The study of approaches as in 1.
+		\end{enumerate}
+		\begin{flushright}
+			\hfill{}{IEEE standard glossary of software engineering terminology~\cite{radatz1990ieee}}
+		\end{flushright}
+	\end{definition}
+\end{framed}
+
+\paragraph{}
+The above definition makes it clear that, at its roots, software engineering follows the same idea as engineering, with the difference that it is applied to the digital world. When performing software engineering, it is sometimes useful to go backward in the engineering process, that is, doing backward-engineering instead of forward-engineering. The definition below embodies this process, and three realistic scenarios are given to illustrate its uses.
+
+\begin{framed}
+	\begin{definition}
+		\underline{Software reverse engineering} is the practice of analysing a software system, either in whole or in part, to extract design and implementation information.
+		\begin{flushright}
+			\hfill{}{Handbook of Information and Communication Security~\cite{cipresso2010software}}
+		\end{flushright}
+	\end{definition}
+\end{framed}
+
+\paragraph{}
+Today's technology is tomorrow's legacy system. Even if a good documentation can lessen the need of reverse engineering, there is no magic solution to remove it from the equation. Indeed, developers and designers come and go, taking with them knowledge that is not necessarily explicitly written. It could also happen that some parts of a software application\footnote{A (software) application is what is provided to the end-users, it is the product and its functionalities.} were outsourced/bought and the company responsible for making the parts does not exist anymore. Moreover, when software engineers are asked to extend an existing system, 50 to 90\% of the time is spent on program understanding, which is not economically sustainable. It is thus easy to see why reverse engineering can be beneficial for the software engineering world~\cite{ali2005teach, cipresso2010software}.
+
+\paragraph{}
+Development processes are widely used when dealing with software engineering. They help dividing the development of an application into segments that are put one after the other to form a waterfall from the waterfall model, a cycle as defined by the agile methodology, or any other composition. These segments usually go in the direction that produces the desired object of the process, in part or in whole. It is called forward-engineering. One could, for whatever reason, want to go backward in that process, that is, from a segment; to try to extract information from the one that led to it using reverse engineering. Thus, in this situation, reverse engineering techniques could be used on an executable file, a source code, an UML diagram or any kind of result from segments that compose the used process~\cite{ChikofskyElliotCross}.
+
+\paragraph{}
+An example worth noticing is the Millennium Bug, also called the Year 2000 Problem. In the early nineties, people started pondering about what would happen upon reaching the year 2000. Because dates were usually encoded using two digits, 2000 would have been indistinguishable from 1900, potentially creating bugs in computer related systems. This lead to the development of reverse engineering tools that could detect bugs from source files or executable~\cite{reps1997use}. Funnily enough, at the time of writing, a very similar situation called the Year 2038 Problem is being stressed upon the software industry. The 32bit signed date format in Unix can only go as far as 03:14:07 UTC on Tuesday, 19 January 2038. The very next second will make the date tip over to the 13 December 1901, possibly leading to yet another range of problems~\cite{wiki:year2038problem}.
+
+\subsection{Information Security}
+\begin{framed}
+	\begin{definition}
+		The term \underline{information security} means protecting information and information systems from unauthorized access, use, disclosure, disruption, modification, or destruction in order to provide:
+		\begin{itemize}
+			\item integrity, which means guarding against improper information modification or destruction, and includes ensuring information nonrepudiation and authenticity; 
+			\item confidentiality, which means preserving authorized restrictions on access and disclosure, including means for protecting personal privacy and proprietary information; and  
+			\item availability, which means ensuring timely and reliable access to and use of information.
+		\end{itemize}
+		\begin{flushright}
+			\hfill{}{United States Code, 2006 Edition, Supplement 5, Title 44~\cite{uscode_t44}}
+		\end{flushright}
+	\end{definition}
+\end{framed}
+
+\paragraph{}
+Reverse engineering applied with a information security point of view is broadly speaking about protecting information lying inside digital objects that have security implications. Hereunder will be given two scenarios which illustrate that specific use.
+
+\paragraph{}
+A fictional company whose name is irrelevant for this case has had its main server breached by a malware, making the company vulnerable to external cyber-attacks. To remedy the problem, the company tasks its most talented developers to find and eradicate the malevolent application as well as to understand how it made it so far, in order to prevent the scenario from repeating itself again. To carry out these tasks, they can look (amongst other things) at the logs of the operating system running on the server and the intermediate devices, but it might not bring complete answers to the questions. Applying reverse engineering to the malware is one of the solutions to find out precisely what has been done to the system, how to fully remove the malicious application and maybe how it made its way into the system. On the other side of the spectrum, a hacker working for a competing company might use reverse engineering to find security flaws in a specific operating system with the intent of using them to create malicious application able to bypass security measures.
+
+\paragraph{}
+As the state of the technology in software languages evolved, many developers moved to high level programming languages that offer strong abstractions over the underling system with the intend to be more productive. As a result, it is not uncommon to lose touch with what is actually happening under the hood. When dealing with certain tasks, it might be necessary to dive back in the dirty mud of the low level world to get a deeper understanding of the underling system, something very useful when performing reverse engineering from a security point of view. Indeed, what better place than in the foundation of the whole system one could find security flaws? The main idea behind using reverse engineering in computer security is that, to defeat a crook, it is necessary to think like one~\cite{ali2005teach, cipresso2010software}.
+
+\subsection{Scenarios}
+\paragraph{}
+Hereunder are listed nine general and straight forward scenarios that involve reverse engineering identified in \textit{Handbook of Information and Communication Security}~\cite{cipresso2010software} and \textit{Reversing: Secrets of Reverse Engineering}~\cite{eilam2005reversing}:
+\begin{itemize}
+	\item \textbf{Malicious software}: Reverse engineering is used both by developers of malicious software and developers of anti-virus software. On one side, they try to find flaws in systems using reverse engineering with the intend of using them to create malicious applications, and on the other side they use reverse engineering to understand the behaviour of the malicious applications and how to counter them.
+	\item \textbf{Reversing cryptographic algorithms}: When the security of an algorithm entirely lies in its secrecy, successfully applying reverse engineering to it could be synonym of breaking it. Another situation arises when implementing known cryptographic algorithms. Because implementation details can have unexpected impact, it is advised to either check the source code or to reverse the executable to make sure everything is conformed to the specifications.
+	\item \textbf{Digital rights management}: Internet being a new means of communication, media content providers had to digitise their products to follow the market. Digital information being very easy to move and duplicate led to the surge of piracy. As an attempt to counter this tendency, the media providers decided to add technologies in their products, which try to control the distribution of the content. They are called digital rights management (DRM) technologies. Once again, crackers (reversers specialised in breaking digital protections) appeared on the opposite side of the spectrum.
+	\item \textbf{Auditing executable files}: When the source code of an application is missing, all there is left are the executables. If one wants to audit these files to find vulnerabilities, reverser engineering is the only way to go.
+	\item \textbf{Evaluating software quality and robustness}: When an end-product, which does not provide its source code, has to be audited to check if it qualifies to a certain level of quality and robustness, reverse engineering tools usually come to play.
+	\item \textbf{Legacy software maintenance, re-engineering, and evolution}: Recover the design of a legacy system, usually when source code is no longer available, to allow maintenance, re-engineering, and evolution of that system.
+	\item \textbf{Verification that implementation matches design}: As explained above, going backward in the development process of an application can give insight on the previous segments, which is useful to determine if the implementation matches the design.
+	\item \textbf{Achieving interoperability with proprietary software}: Because, no matter how hard one tries, documentation is almost always insufficient when dealing with closed source system. It is often necessary to contact the vendor to get answers, but reverse engineering could be used to get answers faster.
+	\item \textbf{Developing competing software}: One could try to steal an un-patented secret algorithm from a competitor's product using reverse engineering. To be noted that, most of the time, software applications are too big to be entirely reversed, making it easier to start a new application from scratch. 
+\end{itemize}
+
+\subsection{Data Reverse Engineering}
+\paragraph{}
+As mentioned previously, the definition of reverse engineering is vague on the kind of object that can be under observation. This work will be mostly about reversing techniques applied to executable files, and it will sometimes imply the use of data reverse engineering, which consists in deciphering program data such as the structure of a database, a network protocol, a data structure, or even a file format. To be more precise, this work will be also interested in deciphering data that one can find inside an executable file.
+
+\paragraph{}
+An example of data reverse engineering can be found in the history of the .DWG proprietary file format developed by Autodesk~\cite{dwg}. At one point in time, it was mandatory to buy their software to use files encoded in that specific format and so, an association of software developers and users decided to reverse engineer it to create an open source alternative to work on that format~\cite{WebcitationOpenDesignAlliance}. The same things happened to file formats produced by the Microsoft Office suite.
+
+\paragraph{}
+Data reverse engineering can be useful both when performing reverse engineering with motivations from the information security or the software engineering field. The two following scenarios give insight on the matter:
+\begin{itemize}
+	\item \textbf{Software engineering}: When reversing applications that are built to use databases or any kind of structured file, one could try to reverse engineer these objects to get insight on how the application works~\cite{hainaut1996database}. Because there is no logic embedded inside, it can be easier than coping with the whole system.
+	\item \textbf{Computer security}: Understanding how data is represented inside an application's memory can be useful to speed up the reversing process. An example would be understanding how an important data structure for the process to carry out its operations is structured, which would give insight on how the code manipulating it would look like.
+\end{itemize}

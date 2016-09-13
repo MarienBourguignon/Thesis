@@ -1,0 +1,14 @@
+\noindent\begin{minipage}{.45\textwidth}
+	\begin{lstlisting}[caption={The memory location a and b are referencing to the same location.}, label={lst:chi_function}, frame=tlrb, language=C]
+	<@$ [a_{\bot}]_1 := 5 $@>
+	<@$ [b_{\bot}]_2 := 6 $@>
+	<@$ [a_{\bot}]_2 := [b_{\bot}]_2 $@>
+	\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth}
+	\begin{lstlisting}[caption={The memory location a and b \textbf{may} be referencing to the same location.}, label={lst:chi_function}, frame=tlrb, language=C]
+<@$ [a_{\bot}]_1 := 5 $@>
+<@$ [b_{\bot}]_2 := 6 $@>
+<@$ [a_{\bot}]_2 := \chi([a_{\bot}]_1, [b_{\bot}]_2) $@>
+	\end{lstlisting}
+\end{minipage}
